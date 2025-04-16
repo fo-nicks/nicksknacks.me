@@ -1,0 +1,62 @@
+<!DOCTYPE html><html><head><link rel="preconnect" href="https://fonts.googleapis.com"></link><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin></link><link href="https://fonts.googleapis.com/css2?family=Castoro:ital@0;1&amp;display=swap" rel="stylesheet"></link><link rel="stylesheet" href="/styles.css"></link><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><script src="/index.js" defer></script><title>Yet another static file website</title></head><body><div class="main"><header><a class="nav-link" href="/">POSTS</a><a class="nav-link" href="/about.html">ABOUT</a></header><div class="content"><div class="sidebar"></div><div class="page-content"><h1>Yet another static file website</h1>
+<p>Today marks my 3rd (possibly 4th) attempt to create my own static file site. If there’s one thing I’ve learned about myself, I never tire of finding new shiny ways to do the same thing. The flavor of this half-decade (lustrum?) is Rust paired with a nifty little HTML macro crate by the name of <a href="https://maud.lambda.xyz/">Maud</a>.</p>
+<p>Maud is great. It’s so great that I prefer using it’s <code>html!</code> macro over writing actual HTML. Here’s a couple lines to give you a taste:</p>
+<pre><code class="language-rust">html! {
+    div class="some-container" {
+        h1 {"foo" }
+        p {"bar" }
+    }
+}
+</code></pre>
+<p>Super succinct, so less keystrokes. It’s also nice not having to think about balancing closing HTML tags.</p>
+<p>The usage of Axum is so minimal it’s probably not worth talking about. It’s <em>so</em> minimal that I really want to talk about it:</p>
+<pre><code class="language-rust">#[tokio::main]
+async fn main() {
+    let app = Router::new()
+        .fallback_service(ServeDir::new("static"));
+
+    let port = port();
+    let (cert, key) = certs();
+    let config = 
+        RustlsConfig::from_pem_file(cert, key)
+        .await.unwrap();
+
+    let address = 
+        SocketAddr::from(([0, 0, 0, 0], port));
+    axum_server::bind_rustls(address, config)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+</code></pre>
+<p>And not an annotation-designated handler or heavy DI framework in sight! Beautiful.</p>
+<blockquote>
+<p>But wait! How can you use Maud to serve static files, when the Maud macros have to be compiled?</p>
+</blockquote>
+<p>The key here is to generate the files beforehand. One could potentially create a separate Cargo project for spitting out the raw HTML, but I’ve opted to use a Cargo build script instead. The idea behind Cargo build scripts is there might be some preliminary dependencies you want to create prior to building your main executable (or library). The usual candidates here are C or C++ dependencies that must be built before being linked to your Rust binary.</p>
+<p>I’m stretching (butchering probably) the definition of a Cargo build dependency by using a build script to create HTML, which one could argue is a runtime dependency. As tacky as it may be, I’m sticking with the build script because,</p>
+<ul>
+<li>A single <code>cargo build</code> command builds everything</li>
+<li>The number of HTML files to generate is small</li>
+<li>I’m doubtful anyone will ever build this besides me</li>
+</ul>
+<h2>Writing Posts</h2>
+<p>As concise as Maud’s macros are, I prefer not to think in HTML when writing posts. I’ve opted to use the <a href="https://github.com/pulldown-cmark/pulldown-cmark"><code>pulldown-cmark</code></a> crate to parse markdown files and generate HTML post files, one for every markdown file in a flat source directory. I like this approach because the file name can be used to ensure unique URL handles.</p>
+<p>There’s only one issue: how do we store and display post meta such as the publishing date? I had a few ideas about this. The first was to lean on file properties. Maybe use the file creation timestamp as the publishing date. The main problem here is that there’s a good chance I end up restoring these files from a backup or moving them, and then extra care would be needed to ensure this timestamp is preserved–not ideal. Also, file properties won’t help us store arbitrary properties like a tag list.</p>
+<p>Another thought I had revolved around using markdown meta blocks to store the extra post information. <code>pulldown-cmark</code> supports this behind a feature flag, as it isn’t in the markdown spec. I like this way the most, as all post information can be obtained from a single file.
+ 
+Unfortunately, I lack the time to dig into the nuts and bolts of <code>pulldown-cmark</code> parsing. So, this gets to be a future enhancement, and I have somewhat begrudgingly settled on using a JSON file to house the post meta.</p>
+<p>By way of example, if I have a post with the path <code>posts/hello-world.md</code>, then right alongside it, I can add a <code>posts/hello-world.json</code>:</p>
+<pre><code>{
+ "date": "2025-04-17",
+ "tags": [
+   "Rust",
+   "Web"
+ ]
+}
+</code></pre>
+<p>We can lean on good ol’ <code>serde_json</code> here to read and deserialize the meta file. The build script can then use this information when generating the HTML for the associated post.
+ </p>
+<h2>In Practice</h2>
+<p>It’s working great so far! There are a few odds and ends I’ve neglected to mention, which probably warrant another post. In the meantime, feel free to check out the <a href="https://github.com/fo-nicks/nicksknacks.me">source</a>.</p>
+<footer><p class="date">Posted on April 17, 2025</p><p class="tags"><a class="tag" href="/?tag=Rust">Rust</a><span>, </span><a class="tag" href="/?tag=Web">Web</a></p></footer></div></div><div class="footer"><p>Built with <a href="https://www.rust-lang.org/">Rust</a> and a dash of <a href="https://maud.lambda.xyz/">Maud</a>. Brought to you by <a href="https://github.com/tokio-rs/axum">Axum</a>.<a href="https://github.com/fo-nicks/nicksknacks.me"><img class="inline-icon" src="/img/github-mark.svg"></img></a></p></div></div></body></html>

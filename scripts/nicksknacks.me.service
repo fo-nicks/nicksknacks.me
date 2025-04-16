@@ -1,0 +1,11 @@
+[Unit]
+Description=nicksknacks.me site service
+
+[Service]
+User=nicksknacks
+WorkingDirectory=/var/www/nicksknacks.me
+ExecStart=/var/www/nicksknacks.me/nicksknacks
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
