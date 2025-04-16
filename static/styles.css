@@ -1,0 +1,140 @@
+body {
+    font-family: "Castoro", serif;
+    font-weight: 400;
+    font-style: normal;
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    background-color: #f8f8f8;
+    padding: 20px;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+}
+
+.content {
+    display: flex;
+    flex-grow: 1;
+}
+
+.content a {
+    color: #333;
+}
+
+.sidebar {
+    max-width: 200px;
+    border-right: 1px solid #ccc;
+    flex-grow: 1;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+    padding: 10px 0;
+}
+
+.sidebar li {
+    list-style: none;
+}
+
+.page-content {
+    padding-left: 20px;
+    padding-right: 20px;
+    max-width: 720px;
+    flex-grow: 1;
+    animation: 0.8s fade-in;
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.nav-link {
+    color: #333;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: 600;
+}
+
+
+header {
+    border-bottom: 1px solid #ccc;
+}
+
+.date {
+    font-style: italic;
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+.tags {
+    margin: 0px;
+
+}
+
+.tags a,
+.tags span {
+    font-style: italic;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.8em;
+}
+
+.post-list {
+    padding-left: 0px;
+}
+
+.post-list li {
+    list-style: none;
+    margin-bottom: 10px;
+    padding: 0px 10px 0px 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.post-list .title-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-list .title {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #333;
+    text-decoration: none;
+}
+
+.footer {
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: right;
+}
+
+.footer a {
+    font-size: 0.9em;
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.inline-icon {
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 5px;
+    margin-left: 5px;
+    vertical-align: text-bottom;
+}

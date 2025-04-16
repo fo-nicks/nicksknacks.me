@@ -1,0 +1,1 @@
+Hey there! Nick Riley, here. I like to build things, including this site. It's a markdown-based static file server, wired together over a few spare afternoons I had. 
