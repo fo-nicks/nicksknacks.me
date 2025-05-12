@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: "Castoro", serif;
     font-weight: 400;
@@ -44,9 +48,16 @@ header {
     list-style: none;
 }
 
+code {
+    display: block;
+    overflow-x: auto;
+}
+
 .page-content {
     padding-left: 20px;
     padding-right: 20px;
+    overflow-x: hidden;
+    width: 100%;
     max-width: 720px;
     flex-grow: 1;
     animation: 0.8s fade-in;
