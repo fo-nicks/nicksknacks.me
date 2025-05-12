@@ -48,7 +48,7 @@ header {
     list-style: none;
 }
 
-code {
+pre code {
     display: block;
     overflow-x: auto;
 }
